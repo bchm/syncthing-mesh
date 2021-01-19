@@ -1,2 +1,54 @@
 ---
-# tasks file for syncthing-mesh
+- name: Add syncthing repository
+  block:
+    - name: Add syncthing repository
+      copy:
+        content: |
+          deb https://apt.syncthing.net/ syncthing release
+        dest: /etc/apt/sources.list.d/syncthing.list
+
+    - name: Pin syncthing repository priority
+      copy:
+        content: |
+          Package: *
+          Pin: origin apt.syncthing.net
+          Pin-Priority: 990
+        dest: /etc/apt/preferences.d/syncthing
+
+    - name: Add syncthing repository key
+      apt_key:
+        url: https://syncthing.net/release-key.txt
+        state: present
+
+- name: Install syncthing
+  apt:
+    update_cache: yes
+    state: present
+    name:
+      - apt-transport-https
+      - syncthing
+
+- name: Enable syncthing service
+  service:
+    name: "syncthing@{{ wireguard_network_name }}"
+    enabled: yes
+
+- name: Restart syncthing service
+  service:
+    name: "syncthing@{{ wireguard_network_name }}"
+    state: restarted
+
+#     sudo systemctl enable syncthing@pi.service
+#     sudo systemctl start syncthing@pi.service
+#     sed -i 's/<address>127.0.0.1:8384<\/address>/<address>0.0.0.0:8384<\/address>/g' ~/.config/syncthing/config.xml
+
+#     mkdir -p ~/tmp
+#     {   echo "[Unit]"; 
+#         echo "#After=network-online.target";
+#         echo "#After=systemd-timesyncd.service";
+#         echo "Wants=systemd-time-wait-sync.service";
+#         echo "After=systemd-time-wait-sync.service";
+#     } >~/tmp/syncthing-override.conf
+
+# sudo env SYSTEMD_EDITOR="cp $HOME/tmp/syncthing-override.conf" systemctl edit syncthing@pi.service
+#     sudo systemctl restart syncthing@pi.service

@@ -40,8 +40,6 @@
   copy:
     content: |
       [Unit]
-      #After=network-online.target
-      #After=systemd-timesyncd.service
       Wants=systemd-time-wait-sync.service
       After=systemd-time-wait-sync.service
     dest: /etc/systemd/system/syncthing@{{ service_instance_name | default(ansible_user_id) }}.service.d/override.conf
@@ -51,8 +49,14 @@
   notify:
     - Enable syncthing service
     - Restart syncthing service
-  when: wait_for_time_sync
+  when: wait_for_time_sync is defined and wait_for_time_sync == True
 
+- name: Set GUI address
+  community.general.xml:
+    path: ~/.config/syncthing/config.xml
+    xpath: /configuration/gui/address
+    value: "{{ gui_address }}"
+  when: gui_address is defined
 
 
 #     sed -i 's/<address>127.0.0.1:8384<\/address>/<address>0.0.0.0:8384<\/address>/g' ~/.config/syncthing/config.xml

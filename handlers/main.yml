@@ -1,2 +1,10 @@
 ---
-# handlers file for syncthing-mesh
+- name: Enable syncthing service
+  service:
+    name: "syncthing@{{ service_instance_name | default(ansible_user_id) }}"
+    enabled: yes
+
+- name: Restart syncthing service
+  service:
+    name: "syncthing@{{ service_instance_name | default(ansible_user_id) }}"
+    state: restarted

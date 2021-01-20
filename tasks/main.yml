@@ -27,28 +27,36 @@
     name:
       - apt-transport-https
       - syncthing
+  notify:
+    - Enable syncthing service
+    - Restart syncthing service
 
-- name: Enable syncthing service
+- name: Stop syncthing service
   service:
-    name: "syncthing@{{ wireguard_network_name }}"
-    enabled: yes
+    name: "syncthing@{{ service_instance_name | default(ansible_user_id) }}"
+    state: stopped
 
-- name: Restart syncthing service
-  service:
-    name: "syncthing@{{ wireguard_network_name }}"
-    state: restarted
+- name: Override service to wait for time sync after boot
+  copy:
+    content: |
+      [Unit]
+      #After=network-online.target
+      #After=systemd-timesyncd.service
+      Wants=systemd-time-wait-sync.service
+      After=systemd-time-wait-sync.service
+    dest: /etc/systemd/system/syncthing@{{ service_instance_name | default(ansible_user_id) }}.service.d/override.conf
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+  notify:
+    - Enable syncthing service
+    - Restart syncthing service
+  when: wait_for_time_sync
 
-#     sudo systemctl enable syncthing@pi.service
-#     sudo systemctl start syncthing@pi.service
+
+
 #     sed -i 's/<address>127.0.0.1:8384<\/address>/<address>0.0.0.0:8384<\/address>/g' ~/.config/syncthing/config.xml
 
-#     mkdir -p ~/tmp
-#     {   echo "[Unit]"; 
-#         echo "#After=network-online.target";
-#         echo "#After=systemd-timesyncd.service";
-#         echo "Wants=systemd-time-wait-sync.service";
-#         echo "After=systemd-time-wait-sync.service";
-#     } >~/tmp/syncthing-override.conf
 
 # sudo env SYSTEMD_EDITOR="cp $HOME/tmp/syncthing-override.conf" systemctl edit syncthing@pi.service
 #     sudo systemctl restart syncthing@pi.service

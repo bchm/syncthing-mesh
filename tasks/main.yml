@@ -77,9 +77,8 @@
     value: "{{ gui_address }}"
   when: gui_address is defined
 
+- name: Collect device ids
+  become: False
+  command: /usr/bin/syncthing -device-id
+  register: device_id
 
-#     sed -i 's/<address>127.0.0.1:8384<\/address>/<address>0.0.0.0:8384<\/address>/g' ~/.config/syncthing/config.xml
-
-
-# sudo env SYSTEMD_EDITOR="cp $HOME/tmp/syncthing-override.conf" systemctl edit syncthing@pi.service
-#     sudo systemctl restart syncthing@pi.service

@@ -1,0 +1,36 @@
+- name: Add device
+  become: False
+  community.general.xml:
+    path: ~/config.xml
+    # path: ~/.config/syncthing/config.xml
+    xpath: /configuration/device
+    attribute: id
+    value: "{{ hostvars[item].device_id.stdout }}"
+  register: added_device
+
+- name: Add default device config
+  become: False
+  community.general.xml:
+    path: ~/config.xml
+    xpath: /configuration/device[@id='{{ hostvars[item].device_id.stdout }}']
+    pretty_print: True
+    set_children:
+      - address: "dynamic"
+      - paused: "false"
+      - autoAcceptFolders: "false"
+      - maxSendKbps: "0"
+      - maxRecvKbps: "0"
+      - maxRequestKiB: "0"
+      - untrusted: "false"
+      - remoteGUIPort: "0"
+
+# <device id="NTDPAK4-YSXAPDI" name="DESKTOP" compression="metadata" introducer="false" skipIntroductionRemovals="false" introducedBy="">
+#         <address>dynamic</address>
+#         <paused>false</paused>
+#         <autoAcceptFolders>false</autoAcceptFolders>
+#         <maxSendKbps>0</maxSendKbps>
+#         <maxRecvKbps>0</maxRecvKbps>
+#         <maxRequestKiB>0</maxRequestKiB>
+#         <untrusted>false</untrusted>
+#         <remoteGUIPort>0</remoteGUIPort>
+#     </device>

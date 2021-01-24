@@ -82,3 +82,11 @@
   command: /usr/bin/syncthing -device-id
   register: device_id
 
+- name: Add devices
+  include_tasks: add_device.yml  
+  loop: "{{ ansible_play_batch }}"
+
+
+
+
+

@@ -83,10 +83,9 @@
   register: device_id
 
 - name: Add devices
-  include_tasks: add_device.yml  
+  include_tasks: add_device.yml
   loop: "{{ ansible_play_batch }}"
 
-
-
-
-
+- name: Add folder
+  include_tasks: add_folder.yml
+  loop: "{{ folders | dict2items }}"

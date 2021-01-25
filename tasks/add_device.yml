@@ -14,23 +14,15 @@
     path: ~/config.xml
     xpath: /configuration/device[@id='{{ hostvars[item].device_id.stdout }}']
     pretty_print: True
+    input_type: xml
     set_children:
-      - address: "dynamic"
-      - paused: "false"
-      - autoAcceptFolders: "false"
-      - maxSendKbps: "0"
-      - maxRecvKbps: "0"
-      - maxRequestKiB: "0"
-      - untrusted: "false"
-      - remoteGUIPort: "0"
-
+      - <address>dynamic</address>
+      - <paused>false</paused>
+      - <autoAcceptFolders>false</autoAcceptFolders>
+      - <maxSendKbps>0</maxSendKbps>
+      - <maxRecvKbps>0</maxRecvKbps>
+      - <maxRequestKiB>0</maxRequestKiB>
+      - <untrusted>false</untrusted>
+      - <remoteGUIPort>0</remoteGUIPort>
+  when: added_device.changed
 # <device id="NTDPAK4-YSXAPDI" name="DESKTOP" compression="metadata" introducer="false" skipIntroductionRemovals="false" introducedBy="">
-#         <address>dynamic</address>
-#         <paused>false</paused>
-#         <autoAcceptFolders>false</autoAcceptFolders>
-#         <maxSendKbps>0</maxSendKbps>
-#         <maxRecvKbps>0</maxRecvKbps>
-#         <maxRequestKiB>0</maxRequestKiB>
-#         <untrusted>false</untrusted>
-#         <remoteGUIPort>0</remoteGUIPort>
-#     </device>

@@ -1,0 +1,60 @@
+- name: Add folder
+  become: False
+  community.general.xml:
+    path: ~/config.xml
+    # path: ~/.config/syncthing/config.xml
+    xpath: /configuration/folder
+    attribute: id
+    value: "{{ item.key }}"
+  register: added_folder
+
+- name: Add folder path
+  become: False
+  community.general.xml:
+    path: ~/config.xml
+    # path: ~/.config/syncthing/config.xml
+    xpath: /configuration/folder[@id='{{  item.key }}']
+    attribute: path
+    value: "{{ item.value }}"
+  when: added_folder.changed
+
+# - name: Add default folder config
+#   become: False
+#   community.general.xml:
+#     path: ~/config.xml
+#     xpath: /configuration/folder[@id='{{ item.key }}']
+#     pretty_print: True
+#     input_type: xml
+#     set_children:
+# <folder id="default" label="Default Folder" path="/home/pi/Sync" type="sendreceive" rescanIntervalS="3600" fsWatcherEnabled="true" fsWatcherDelayS="10" ignorePerms="false" autoNormalize="true">
+#     <filesystemType>basic</filesystemType>
+#     <device id="W7LQT2F-UNA37MW-FLVWXDM-2TQGI3A-OB33SUV-7EYABUE-VWM7LZH-6LHYXAR" introducedBy="">
+#       <encryptionPassword/>
+#     </device>
+#     <minDiskFree unit="">0</minDiskFree>
+#     <versioning>
+#       <cleanupIntervalS>3600</cleanupIntervalS>
+#     </versioning>
+#     <copiers>0</copiers>
+#     <pullerMaxPendingKiB>0</pullerMaxPendingKiB>
+#     <hashers>0</hashers>
+#     <order>random</order>
+#     <ignoreDelete>false</ignoreDelete>
+#     <scanProgressIntervalS>0</scanProgressIntervalS>
+#     <pullerPauseS>0</pullerPauseS>
+#     <maxConflicts>-1</maxConflicts>
+#     <disableSparseFiles>false</disableSparseFiles>
+#     <disableTempIndexes>false</disableTempIndexes>
+#     <paused>false</paused>
+#     <weakHashThresholdPct>25</weakHashThresholdPct>
+#     <markerName>.stfolder</markerName>
+#     <copyOwnershipFromParent>false</copyOwnershipFromParent>
+#     <modTimeWindowS>0</modTimeWindowS>
+#     <maxConcurrentWrites>2</maxConcurrentWrites>
+#     <disableFsync>false</disableFsync>
+#     <blockPullOrder>standard</blockPullOrder>
+#     <copyRangeMethod>standard</copyRangeMethod>
+#     <caseSensitiveFS>false</caseSensitiveFS>
+#     <junctionsAsDirs>false</junctionsAsDirs>
+#   </folder>
+

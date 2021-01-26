@@ -66,8 +66,7 @@
     update_cache: yes
     state: present
     name:
-      - python-lxml
-  when: gui_address is defined
+      - python3-lxml
 
 - name: Set GUI address
   become: False

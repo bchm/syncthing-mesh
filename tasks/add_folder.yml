@@ -3,7 +3,7 @@
   community.general.xml:
     path: ~/config.xml
     # path: ~/.config/syncthing/config.xml
-    xpath: /configuration/folder
+    xpath: /configuration/folder[@id='{{  item.key }}']
     attribute: id
     value: "{{ item.key }}"
   register: added_folder

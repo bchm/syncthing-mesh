@@ -3,7 +3,7 @@
   community.general.xml:
     path: ~/config.xml
     # path: ~/.config/syncthing/config.xml
-    xpath: /configuration/device
+    xpath: /configuration/device[@id='{{ hostvars[item].device_id.stdout }}']
     attribute: id
     value: "{{ hostvars[item].device_id.stdout }}"
   register: added_device

@@ -12,6 +12,7 @@
   become: False
   community.general.xml:
     path: ~/config.xml
+    # path: ~/.config/syncthing/config.xml
     xpath: /configuration/device[@id='{{ hostvars[item].device_id.stdout }}']
     pretty_print: True
     input_type: xml

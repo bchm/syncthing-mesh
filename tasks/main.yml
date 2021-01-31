@@ -84,7 +84,11 @@
 - name: Add devices
   include_tasks: add_device.yml
   loop: "{{ ansible_play_batch }}"
+  loop_control:
+    loop_var: device_item
 
 - name: Add folder
   include_tasks: add_folder.yml
   loop: "{{ folders | dict2items }}"
+  loop_control:
+    loop_var: folder_item

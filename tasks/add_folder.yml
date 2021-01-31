@@ -3,9 +3,9 @@
   community.general.xml:
     path: ~/config.xml
     # path: ~/.config/syncthing/config.xml
-    xpath: /configuration/folder[@id='{{  item.key }}']
+    xpath: /configuration/folder[@id='{{  folder_item.key }}']
     attribute: id
-    value: "{{ item.key }}"
+    value: "{{ folder_item.key }}"
   register: added_folder
 
 - name: Add folder path
@@ -13,16 +13,16 @@
   community.general.xml:
     path: ~/config.xml
     # path: ~/.config/syncthing/config.xml
-    xpath: /configuration/folder[@id='{{  item.key }}']
+    xpath: /configuration/folder[@id='{{  folder_item.key }}']
     attribute: path
-    value: "{{ item.value }}"
+    value: "{{ folder_item.value }}"
   when: added_folder.changed
 
 - name: Add default folder config
   become: False
   community.general.xml:
     path: ~/config.xml
-    xpath: /configuration/folder[@id='{{ item.key }}']
+    xpath: /configuration/folder[@id='{{ folder_item.key }}']
     pretty_print: True
     input_type: xml
     set_children:
@@ -52,25 +52,39 @@
       - <junctionsAsDirs>false</junctionsAsDirs>
   when: added_folder.changed
 
-- debug:
-    msg: "{{ ansible_play_batch | map('extract', hostvars, 'folders') }}"
 
+- debug:
+    msg: "{{ folder_item.key }}"
+
+- debug:
+    msg: "{{ ansible_play_batch | map('extract', hostvars) }}"
+
+- debug:
+    msg: "{{ ansible_play_batch | map('extract', hostvars) | selectattr('folders['folder_item.key']'','defined')  }}"
+
+- debug:
+    msg: "{{ folder_item.key }} - {{ device_item }}"
+  loop: "{{ ansible_play_batch | map('extract', hostvars) | selectattr(folders[folder_item.key],'defined')  }}"
+  loop_control:
+    loop_var: device_item
 
 - name: Add devices to folder
   become: False
   community.general.xml:
     path: ~/config.xml
     # path: ~/.config/syncthing/config.xml
-    xpath: /configuration/folder/device[@id='{{  item.key }}']
+    xpath: /configuration/folder/device[@id='{{  hostvars[device_item].device_id.stdout }}']
     attribute: id
-    value: "{{ item.key }}"  
-  loop: "{{ ansible_play_batch | selectattr(folders[item.key],'defined') }}"
+    value: "{{ hostvars[device_item].device_id.stdout }}"
+  loop: "{{ ansible_play_batch | map('extract', hostvars, 'folders') | selectattr(folder_item.key,'defined') }}"
+  loop_control:
+    loop_var: device_item
 
 
       # <device id="W7LQT2F-UNA37MW-FLVWXDM-2TQGI3A-OB33SUV-7EYABUE-VWM7LZH-6LHYXAR" introducedBy="">
         #  <encryptionPassword/>
       # </device>
 # <folder id="default" label="Default Folder" path="/home/pi/Sync" type="sendreceive" rescanIntervalS="3600" fsWatcherEnabled="true" fsWatcherDelayS="10" ignorePerms="false" autoNormalize="true">
-#     
+#
 #   </folder>
 

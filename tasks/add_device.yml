@@ -3,9 +3,9 @@
   community.general.xml:
     path: ~/config.xml
     # path: ~/.config/syncthing/config.xml
-    xpath: /configuration/device[@id='{{ hostvars[item].device_id.stdout }}']
+    xpath: /configuration/device[@id='{{ hostvars[device_item].device_id.stdout }}']
     attribute: id
-    value: "{{ hostvars[item].device_id.stdout }}"
+    value: "{{ hostvars[device_item].device_id.stdout }}"
   register: added_device
 
 - name: Add default device config
@@ -13,7 +13,7 @@
   community.general.xml:
     path: ~/config.xml
     # path: ~/.config/syncthing/config.xml
-    xpath: /configuration/device[@id='{{ hostvars[item].device_id.stdout }}']
+    xpath: /configuration/device[@id='{{ hostvars[device_item].device_id.stdout }}']
     pretty_print: True
     input_type: xml
     set_children:
